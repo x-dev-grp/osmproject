@@ -1,0 +1,129 @@
+version: '3.8'
+
+services:
+  postgres:
+    image: postgres:16-alpine
+    container_name: osm-postgres
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=root
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./init-db.sql:/docker-entrypoint-initdb.d/init-db.sql
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  eureka:
+    build: ./osm-eureka
+    container_name: osm-eureka
+    ports:
+      - "8761:8761"
+    healthcheck:
+      test: ["CMD-SHELL", "curl -f http://localhost:8761/actuator/health || exit 1"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+
+  gateway:
+    build: ./osm-gateway
+    container_name: osm-gateway
+    ports:
+      - "8084:8084"
+    environment:
+      - EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=http://eureka:8761/eureka/
+      - LOG_LEVEL_EUREKA=WARN
+    depends_on:
+      eureka:
+        condition: service_healthy
+
+  security-service:
+    build: ./osm-sec
+    container_name: osm-sec
+    environment:
+      - DB_URL=jdbc:postgresql://postgres:5432/osmsecurity
+      - DB_USER=postgres
+      - DB_PASSWORD=root
+      - EUREKA_DEFAULT_ZONE=http://eureka:8761/eureka/
+    depends_on:
+      postgres:
+        condition: service_healthy
+      eureka:
+        condition: service_healthy
+
+  production-service:
+    build: ./osm-prod
+    container_name: osm-prod
+    environment:
+      - DB_URL=jdbc:postgresql://postgres:5432/osmproduction
+      - DB_USER=postgres
+      - DB_PASSWORD=root
+      - EUREKA_DEFAULT_ZONE=http://eureka:8761/eureka/
+    depends_on:
+      postgres:
+        condition: service_healthy
+      eureka:
+        condition: service_healthy
+
+  hr-service:
+    build: ./osm-hr
+    container_name: osm-hr
+    environment:
+      - DB_URL=jdbc:postgresql://postgres:5432/osmRh
+      - DB_USER=postgres
+      - DB_PASSWORD=root
+      - EUREKA_DEFAULT_ZONE=http://eureka:8761/eureka/
+    depends_on:
+      postgres:
+        condition: service_healthy
+      eureka:
+        condition: service_healthy
+
+  finance-service:
+    build: ./osm-fin
+    container_name: osm-fin
+    environment:
+      - DB_URL=jdbc:postgresql://postgres:5432/osmfinance
+      - DB_USER=postgres
+      - DB_PASSWORD=root
+      - EUREKA_DEFAULT_ZONE=http://eureka:8761/eureka/
+    depends_on:
+      postgres:
+        condition: service_healthy
+      eureka:
+        condition: service_healthy
+
+  inventory-service:
+    build: ./osm-pack
+    container_name: osm-pack
+    environment:
+      - DB_URL=jdbc:postgresql://postgres:5432/abiooc_inventory
+      - DB_USER=postgres
+      - DB_PASSWORD=root
+      - EUREKA_DEFAULT_ZONE=http://eureka:8761/eureka/
+    depends_on:
+      postgres:
+        condition: service_healthy
+      eureka:
+        condition: service_healthy
+
+  conditioning-service:
+    build: ./osm-cond
+    container_name: osm-cond
+    environment:
+      - DB_URL=jdbc:postgresql://postgres:5432/osmoc
+      - DB_USER=postgres
+      - DB_PASSWORD=root
+      - EUREKA_DEFAULT_ZONE=http://eureka:8761/eureka/
+    depends_on:
+      postgres:
+        condition: service_healthy
+      eureka:
+        condition: service_healthy
+
+volumes:
+  postgres_data:

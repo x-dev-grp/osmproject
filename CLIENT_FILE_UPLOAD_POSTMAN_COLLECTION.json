@@ -1,0 +1,698 @@
+{
+  "info": {
+    "name": "OSM Client File Upload API",
+    "description": "Comprehensive test collection for OSM client file upload system including generic, finance, and production endpoints",
+    "version": "1.0.0",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "auth": {
+    "type": "bearer",
+    "bearer": [
+      {
+        "key": "token",
+        "value": "{{jwt_token}}",
+        "type": "string"
+      }
+    ]
+  },
+  "variable": [
+    {
+      "key": "base_url",
+      "value": "http://localhost:8080",
+      "type": "string"
+    },
+    {
+      "key": "jwt_token",
+      "value": "your-jwt-token-here",
+      "type": "string"
+    },
+    {
+      "key": "client_id",
+      "value": "CLIENT_001",
+      "type": "string"
+    },
+    {
+      "key": "test_file_id",
+      "value": "",
+      "type": "string"
+    }
+  ],
+  "item": [
+    {
+      "name": "Generic Client File Upload",
+      "item": [
+        {
+          "name": "Upload Client File",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "pm.test(\"Response has success true\", function () {",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.expect(jsonData.success).to.eql(true);",
+                  "});",
+                  "",
+                  "pm.test(\"Response contains file ID\", function () {",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.expect(jsonData.data).to.not.be.empty;",
+                  "    pm.collectionVariables.set(\"test_file_id\", jsonData.data);",
+                  "});",
+                  "",
+                  "pm.test(\"Upload message is correct\", function () {",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.expect(jsonData.message).to.eql(\"File uploaded successfully\");",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "formdata",
+              "formdata": [
+                {
+                  "key": "file",
+                  "type": "file",
+                  "src": []
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{base_url}}/api/files/client/{{client_id}}/CONTRACTS/CONTRACT_001/upload",
+              "host": ["{{base_url}}"],
+              "path": ["api", "files", "client", "{{client_id}}", "CONTRACTS", "CONTRACT_001", "upload"]
+            },
+            "description": "Upload a file for a specific client and entity type"
+          }
+        },
+        {
+          "name": "Download Client File",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "pm.test(\"Response is binary data\", function () {",
+                  "    pm.expect(pm.response.headers.get('Content-Type')).to.not.be.undefined;",
+                  "});",
+                  "",
+                  "pm.test(\"Content-Disposition header exists\", function () {",
+                  "    pm.expect(pm.response.headers.get('Content-Disposition')).to.include('attachment');",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/files/client/download/{{test_file_id}}",
+              "host": ["{{base_url}}"],
+              "path": ["api", "files", "client", "download", "{{test_file_id}}"]
+            },
+            "description": "Download a file by file ID"
+          }
+        },
+        {
+          "name": "Get File Metadata",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "pm.test(\"Response contains file metadata\", function () {",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.expect(jsonData.success).to.eql(true);",
+                  "    pm.expect(jsonData.data).to.have.property('id');",
+                  "    pm.expect(jsonData.data).to.have.property('name');",
+                  "    pm.expect(jsonData.data).to.have.property('size');",
+                  "    pm.expect(jsonData.data).to.have.property('mimeType');",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/files/client/metadata/{{test_file_id}}",
+              "host": ["{{base_url}}"],
+              "path": ["api", "files", "client", "metadata", "{{test_file_id}}"]
+            },
+            "description": "Get metadata for a specific file"
+          }
+        },
+        {
+          "name": "List Client Files",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "pm.test(\"Response contains file list\", function () {",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.expect(jsonData.success).to.eql(true);",
+                  "    pm.expect(jsonData.data).to.be.an('array');",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/files/client/{{client_id}}/files?entityName=CONTRACTS&pageSize=20",
+              "host": ["{{base_url}}"],
+              "path": ["api", "files", "client", "{{client_id}}", "files"],
+              "query": [
+                {
+                  "key": "entityName",
+                  "value": "CONTRACTS"
+                },
+                {
+                  "key": "pageSize",
+                  "value": "20"
+                }
+              ]
+            },
+            "description": "List files for a specific client and entity"
+          }
+        },
+        {
+          "name": "Find Client File by Object ID",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 200 or 404\", function () {",
+                  "    pm.expect(pm.response.code).to.be.oneOf([200, 404]);",
+                  "});",
+                  "",
+                  "if (pm.response.code === 200) {",
+                  "    pm.test(\"Response contains file info\", function () {",
+                  "        var jsonData = pm.response.json();",
+                  "        pm.expect(jsonData.success).to.eql(true);",
+                  "        pm.expect(jsonData.data).to.have.property('id');",
+                  "    });",
+                  "}"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/files/client/{{client_id}}/CONTRACTS/CONTRACT_001",
+              "host": ["{{base_url}}"],
+              "path": ["api", "files", "client", "{{client_id}}", "CONTRACTS", "CONTRACT_001"]
+            },
+            "description": "Find a specific file by client ID, entity, and object ID"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Finance Service - Client Files",
+      "item": [
+        {
+          "name": "Upload Financial Document",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "pm.test(\"Financial document uploaded successfully\", function () {",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.expect(jsonData.success).to.eql(true);",
+                  "    pm.expect(jsonData.message).to.include('uploaded successfully');",
+                  "    pm.collectionVariables.set(\"finance_file_id\", jsonData.data);",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "formdata",
+              "formdata": [
+                {
+                  "key": "file",
+                  "type": "file",
+                  "src": []
+                },
+                {
+                  "key": "description",
+                  "value": "Sample invoice document",
+                  "type": "text"
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{base_url}}/api/finance/client/{{client_id}}/INVOICES/INV_001/upload",
+              "host": ["{{base_url}}"],
+              "path": ["api", "finance", "client", "{{client_id}}", "INVOICES", "INV_001", "upload"]
+            },
+            "description": "Upload a financial document (invoice, receipt, contract, etc.)"
+          }
+        },
+        {
+          "name": "Download Financial Document",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "pm.test(\"File downloaded successfully\", function () {",
+                  "    pm.expect(pm.response.headers.get('Content-Disposition')).to.include('attachment');",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/finance/client/download/{{finance_file_id}}",
+              "host": ["{{base_url}}"],
+              "path": ["api", "finance", "client", "download", "{{finance_file_id}}"]
+            },
+            "description": "Download a financial document by file ID"
+          }
+        },
+        {
+          "name": "List Financial Documents",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "pm.test(\"Financial documents listed successfully\", function () {",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.expect(jsonData.success).to.eql(true);",
+                  "    pm.expect(jsonData.data).to.be.an('array');",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/finance/client/{{client_id}}/INVOICES/files?pageSize=20",
+              "host": ["{{base_url}}"],
+              "path": ["api", "finance", "client", "{{client_id}}", "INVOICES", "files"],
+              "query": [
+                {
+                  "key": "pageSize",
+                  "value": "20"
+                }
+              ]
+            },
+            "description": "List financial documents for a specific client and entity type"
+          }
+        },
+        {
+          "name": "Get Specific Financial Document",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 200 or 404\", function () {",
+                  "    pm.expect(pm.response.code).to.be.oneOf([200, 404]);",
+                  "});",
+                  "",
+                  "if (pm.response.code === 200) {",
+                  "    pm.test(\"Document found\", function () {",
+                  "        var jsonData = pm.response.json();",
+                  "        pm.expect(jsonData.success).to.eql(true);",
+                  "        pm.expect(jsonData.data).to.have.property('id');",
+                  "    });",
+                  "}"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/finance/client/{{client_id}}/INVOICES/INV_001",
+              "host": ["{{base_url}}"],
+              "path": ["api", "finance", "client", "{{client_id}}", "INVOICES", "INV_001"]
+            },
+            "description": "Get specific financial document by client, entity type, and record ID"
+          }
+        },
+        {
+          "name": "Get Finance Entity Types",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "pm.test(\"Entity types retrieved\", function () {",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.expect(jsonData.success).to.eql(true);",
+                  "    pm.expect(jsonData.data).to.be.an('array');",
+                  "    pm.expect(jsonData.data).to.include('INVOICES');",
+                  "    pm.expect(jsonData.data).to.include('RECEIPTS');",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/finance/client/{{client_id}}/entities",
+              "host": ["{{base_url}}"],
+              "path": ["api", "finance", "client", "{{client_id}}", "entities"]
+            },
+            "description": "Get all available financial entity types for a client"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Production Service - Delivery Files",
+      "item": [
+        {
+          "name": "Upload Delivery File",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "pm.test(\"Delivery file uploaded successfully\", function () {",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.expect(jsonData.success).to.eql(true);",
+                  "    pm.collectionVariables.set(\"delivery_file_id\", jsonData.data);",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "formdata",
+              "formdata": [
+                {
+                  "key": "file",
+                  "type": "file",
+                  "src": []
+                },
+                {
+                  "key": "category",
+                  "value": "DELIVERY_NOTE",
+                  "type": "text"
+                },
+                {
+                  "key": "description",
+                  "value": "Delivery documentation",
+                  "type": "text"
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{base_url}}/api/production/deliveries/client/{{client_id}}/delivery/DEL_001/upload",
+              "host": ["{{base_url}}"],
+              "path": ["api", "production", "deliveries", "client", "{{client_id}}", "delivery", "DEL_001", "upload"]
+            },
+            "description": "Upload a delivery-related file"
+          }
+        },
+        {
+          "name": "Download Delivery File",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "pm.test(\"Delivery file downloaded\", function () {",
+                  "    pm.expect(pm.response.headers.get('Content-Disposition')).to.include('attachment');",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/production/deliveries/client/{{client_id}}/delivery/DEL_001/download/{{delivery_file_id}}",
+              "host": ["{{base_url}}"],
+              "path": ["api", "production", "deliveries", "client", "{{client_id}}", "delivery", "DEL_001", "download", "{{delivery_file_id}}"]
+            },
+            "description": "Download a delivery file"
+          }
+        },
+        {
+          "name": "List Delivery Files",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "pm.test(\"Delivery files listed\", function () {",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.expect(jsonData.success).to.eql(true);",
+                  "    pm.expect(jsonData.data).to.be.an('array');",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/production/deliveries/client/{{client_id}}/delivery/DEL_001/files",
+              "host": ["{{base_url}}"],
+              "path": ["api", "production", "deliveries", "client", "{{client_id}}", "delivery", "DEL_001", "files"]
+            },
+            "description": "List all files for a specific delivery"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Error Testing",
+      "item": [
+        {
+          "name": "Upload Empty File",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 400\", function () {",
+                  "    pm.response.to.have.status(400);",
+                  "});",
+                  "",
+                  "pm.test(\"Error message for empty file\", function () {",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.expect(jsonData.success).to.eql(false);",
+                  "    pm.expect(jsonData.message).to.include('empty');",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "formdata",
+              "formdata": [
+                {
+                  "key": "file",
+                  "type": "file",
+                  "src": []
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{base_url}}/api/files/client/{{client_id}}/CONTRACTS/CONTRACT_001/upload",
+              "host": ["{{base_url}}"],
+              "path": ["api", "files", "client", "{{client_id}}", "CONTRACTS", "CONTRACT_001", "upload"]
+            },
+            "description": "Test error handling for empty file upload"
+          }
+        },
+        {
+          "name": "Download Non-existent File",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 404\", function () {",
+                  "    pm.response.to.have.status(404);",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/files/client/download/non-existent-file-id",
+              "host": ["{{base_url}}"],
+              "path": ["api", "files", "client", "download", "non-existent-file-id"]
+            },
+            "description": "Test error handling for non-existent file download"
+          }
+        },
+        {
+          "name": "Invalid Finance Entity Type",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 400\", function () {",
+                  "    pm.response.to.have.status(400);",
+                  "});",
+                  "",
+                  "pm.test(\"Error message for invalid entity\", function () {",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.expect(jsonData.success).to.eql(false);",
+                  "    pm.expect(jsonData.message).to.include('Invalid entity type');",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "formdata",
+              "formdata": [
+                {
+                  "key": "file",
+                  "type": "file",
+                  "src": []
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{base_url}}/api/finance/client/{{client_id}}/INVALID_TYPE/TEST_001/upload",
+              "host": ["{{base_url}}"],
+              "path": ["api", "finance", "client", "{{client_id}}", "INVALID_TYPE", "TEST_001", "upload"]
+            },
+            "description": "Test error handling for invalid finance entity type"
+          }
+        }
+      ]
+    }
+  ],
+  "event": [
+    {
+      "listen": "prerequest",
+      "script": {
+        "type": "text/javascript",
+        "exec": [
+          "// Pre-request script to ensure JWT token is set",
+          "if (!pm.collectionVariables.get('jwt_token') || pm.collectionVariables.get('jwt_token') === 'your-jwt-token-here') {",
+          "    console.log('Warning: JWT token is not set. Please update the jwt_token collection variable.');",
+          "}"
+        ]
+      }
+    },
+    {
+      "listen": "test",
+      "script": {
+        "type": "text/javascript",
+        "exec": [
+          "// Global test script",
+          "pm.test('Response time is less than 5000ms', function () {",
+          "    pm.expect(pm.response.responseTime).to.be.below(5000);",
+          "});",
+          "",
+          "// Log response for debugging",
+          "if (pm.response.code >= 400) {",
+          "    console.log('Error Response:', pm.response.text());",
+          "}"
+        ]
+      }
+    }
+  ]
+}

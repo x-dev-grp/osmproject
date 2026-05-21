@@ -1,0 +1,14 @@
+.idea/
+.vscode/
+
+target/
+node_modules/
+dist/
+build/
+
+*.log
+hs_err_pid*.log
+replay_pid*.log
+
+.DS_Store
+Thumbs.db

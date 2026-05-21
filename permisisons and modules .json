@@ -1,0 +1,399 @@
+{
+  "entities": {
+    "bank_account": {
+      "description": "Bank account management",
+      "module": "FINANCE",
+      "permissions": [
+        "READ",
+        "CREATE", 
+        "UPDATE",
+        "DELETE"
+      ]
+    },
+    "base_type": {
+      "description": "Generic type system",
+      "module": "PRODUCTION",
+      "permissions": [
+        "READ",
+        "CREATE",
+        "UPDATE",
+        "DELETE"
+      ]
+    },
+    "expenses": {
+      "description": "Expense management",
+      "module": "FINANCE",
+      "permissions": [
+        "READ",
+        "CREATE",
+        "UPDATE",
+        "DELETE",
+        "APPROVE",
+        "REJECT",
+        "VALIDATE",
+        "PAY",
+        "GEN_PDF"
+      ]
+    },
+    "financial_transactions": {
+      "description": "Universal financial transactions",
+      "module": "FINANCE",
+      "permissions": [
+        "READ",
+        "CREATE",
+        "UPDATE",
+        "DELETE",
+        "APPROVE",
+        "REJECT",
+        "VALIDATE",
+        "PAY",
+        "GEN_PDF",
+        "COMPLETE_PAYMENT_DETAILS"
+      ]
+    },
+    "oil_credits": {
+      "description": "Oil credit management",
+      "module": "PRODUCTION",
+      "permissions": [
+        "READ",
+        "CREATE",
+        "UPDATE",
+        "DELETE",
+        "APPROVE",
+        "REJECT",
+        "VALIDATE",
+        "COMPLETE",
+        "GEN_PDF"
+      ]
+    },
+    "supplier": {
+      "description": "Supplier management",
+      "module": "RECEPTION",
+      "permissions": [
+        "READ",
+        "CREATE",
+        "UPDATE",
+        "DELETE",
+        "ASSIGN_SUPPLIER",
+        "VALIDATE",
+        "GEN_PDF"
+      ]
+    },
+    "supplier_info": {
+      "description": "Supplier information details",
+      "module": "RECEPTION",
+      "permissions": [
+        "READ",
+        "CREATE",
+        "UPDATE",
+        "DELETE",
+        "GEN_PDF"
+      ]
+    },
+    "delivery": {
+      "description": "Delivery management",
+      "module": "RECEPTION",
+      "permissions": [
+        "READ",
+        "CREATE",
+        "UPDATE",
+        "DELETE",
+        "VALIDATE",
+        "COMPLETE",
+        "TO_PROD",
+        "GEN_PDF"
+      ]
+    },
+    "machine_plan": {
+      "description": "Machine planning and scheduling",
+      "module": "PRODUCTION",
+      "permissions": [
+        "READ",
+        "CREATE",
+        "UPDATE",
+        "DELETE",
+        "VALIDATE",
+        "APPROVE",
+        "REJECT",
+        "MAINTENANCE",
+        "GEN_PDF"
+      ]
+    },
+    "mill_machine": {
+      "description": "Mill machine management",
+      "module": "PRODUCTION",
+      "permissions": [
+        "READ",
+        "CREATE",
+        "UPDATE",
+        "DELETE",
+        "MAINTENANCE",
+        "VALIDATE",
+        "GEN_PDF"
+      ]
+    },
+    "oil_transaction": {
+      "description": "Oil transaction management",
+      "module": "PRODUCTION",
+      "permissions": [
+        "READ",
+        "CREATE",
+        "UPDATE",
+        "DELETE",
+        "OIL_IN_TRANSACTION",
+        "OIL_OUT_TRANSACTION",
+        "OIL_PAYMENT",
+        "VALIDATE",
+        "GEN_PDF",
+        "COMPLETE"
+      ]
+    },
+    "parameter": {
+      "description": "System parameters management",
+      "module": "HABILITATION",
+      "permissions": [
+        "READ",
+        "CREATE",
+        "UPDATE",
+        "DELETE"
+      ]
+    },
+    "quality_control_result": {
+      "description": "Quality control results",
+      "module": "PRODUCTION",
+      "permissions": [
+        "READ",
+        "CREATE",
+        "UPDATE",
+        "DELETE",
+        "OLIVE_QUALITY",
+        "OIL_QUALITY",
+        "UPDATE_OLIVE_QUALITY",
+        "UPDATE_OIL_QUALITY",
+        "VALIDATE",
+        "GEN_PDF"
+      ]
+    },
+    "quality_control_rule": {
+      "description": "Quality control rules",
+      "module": "PRODUCTION",
+      "permissions": [
+        "READ",
+        "CREATE",
+        "UPDATE",
+        "DELETE",
+        "VALIDATE",
+        "GEN_PDF"
+      ]
+    },
+    "storage_unit": {
+      "description": "Storage unit management",
+      "module": "PRODUCTION",
+      "permissions": [
+        "READ",
+        "CREATE",
+        "UPDATE",
+        "DELETE",
+        "VALIDATE",
+        "SET_PRICE",
+        "GEN_PDF"
+      ]
+    },
+    "transporter": {
+      "description": "Transporter management",
+      "module": "RECEPTION",
+      "permissions": [
+        "READ",
+        "CREATE",
+        "UPDATE",
+        "DELETE",
+        "VALIDATE",
+        "GEN_PDF"
+      ]
+    },
+    "oil_sales": {
+      "description": "Oil sales management",
+      "module": "FINANCE",
+      "permissions": [
+        "READ",
+        "CREATE",
+        "UPDATE",
+        "DELETE",
+        "CANCEL",
+        "VALIDATE",
+        "APPROVE",
+        "REJECT",
+        "PAY",
+        "GEN_PDF",
+        "COMPLETE"
+      ]
+    },
+    "customers": {
+      "description": "Customer management",
+      "module": "FINANCE",
+      "permissions": [
+        "READ",
+        "CREATE",
+        "UPDATE",
+        "DELETE",
+        "GEN_PDF"
+      ]
+    },
+    "company_profile": {
+      "description": "Company profile management",
+      "module": "HABILITATION",
+      "permissions": [
+        "READ",
+        "CREATE",
+        "UPDATE",
+        "DELETE"
+      ]
+    },
+    "role": {
+      "description": "Role management",
+      "module": "HABILITATION",
+      "permissions": [
+        "READ",
+        "CREATE",
+        "UPDATE",
+        "DELETE",
+        "GEN_PDF"
+      ]
+    },
+    "permission": {
+      "description": "Permission management",
+      "module": "HABILITATION",
+      "permissions": [
+        "READ",
+        "CREATE",
+        "UPDATE",
+        "DELETE",
+        "GEN_PDF"
+      ]
+    },
+    "osmuser": {
+      "description": "User management",
+      "module": "HABILITATION",
+      "permissions": [
+        "READ",
+        "CREATE",
+        "UPDATE",
+        "DELETE",
+        "GEN_PDF"
+      ]
+    },
+    "PRODUITFINAL": {
+      "description": "Finished product management",
+      "module": "INVENTAIR",
+      "permissions": [
+        "READ",
+        "CREATE",
+        "UPDATE",
+        "DELETE"
+      ]
+    }
+  },
+  "modules": {
+    "HR": {
+      "value": 0,
+      "description": "Human Resources module"
+    },
+    "RECEPTION": {
+      "value": 1,
+      "description": "Reception and supplier management"
+    },
+    "PRODUCTION": {
+      "value": 2,
+      "description": "Production and quality control"
+    },
+    "FINANCE": {
+      "value": 3,
+      "description": "Financial management"
+    },
+    "HABILITATION": {
+      "value": 4,
+      "description": "System administration and configuration"
+    },
+    "INVENTAIR": {
+      "value": 5,
+      "description": "Inventory and packaging stock management"
+    },
+    "CONDITIONING": {
+      "value": 6,
+      "description": "Conditioning, orders, projects, labels and expedition management"
+    }
+  },
+  "actions": {
+    "READ": "View entity records",
+    "CREATE": "Create new entity records",
+    "UPDATE": "Modify existing entity records",
+    "DELETE": "Remove entity records",
+    "CANCEL": "Cancel operations or transactions",
+    "OLIVE_QUALITY": "Manage olive quality control",
+    "OIL_QUALITY": "Manage oil quality control",
+    "UPDATE_OLIVE_QUALITY": "Update olive quality parameters",
+    "UPDATE_OIL_QUALITY": "Update oil quality parameters",
+    "TO_PROD": "Move to production workflow",
+    "COMPLETE": "Complete operations or transactions",
+    "OIL_PAYMENT": "Process oil-related payments",
+    "OIL_OUT_TRANSACTION": "Process oil output transactions",
+    "OIL_IN_TRANSACTION": "Process oil input transactions",
+    "OIL_RECEPTION": "Manage oil reception processes",
+    "SET_PRICE": "Set pricing for entities",
+    "ASSIGN_SUPPLIER": "Assign suppliers to operations",
+    "COMPLETE_PAYMENT_DETAILS": "Complete payment information",
+    "VALIDATE": "Validate operations or data",
+    "PAY": "Process payments",
+    "GEN_PDF": "Generate PDF documents",
+    "APPROVE": "Approve operations or requests",
+    "REJECT": "Reject operations or requests",
+    "MAINTENANCE": "Perform maintenance operations"
+  },
+  "security_entities": {
+    "company_profile": {
+      "table": "osmsecurity.public.company_profile",
+      "description": "Company profile information",
+      "module": "HABILITATION",
+      "permissions": [
+        "READ",
+        "CREATE",
+        "UPDATE",
+        "DELETE"
+      ]
+    },
+    "role": {
+      "table": "osmsecurity.public.role",
+      "description": "User roles and permissions",
+      "module": "HABILITATION",
+      "permissions": [
+        "READ",
+        "CREATE",
+        "UPDATE",
+        "DELETE"
+      ]
+      
+    },
+    "permission": {
+      "table": "osmsecurity.public.permission",
+      "description": "System permissions",
+      "module": "HABILITATION",
+      "permissions": [
+        "READ",
+        "CREATE",
+        "UPDATE",
+        "DELETE"
+      ]
+    },
+    "osmuser": {
+      "table": "osmsecurity.public.osmuser",
+      "description": "System users",
+      "module": "HABILITATION",
+      "permissions": [
+        "READ",
+        "CREATE",
+        "UPDATE",
+        "DELETE"
+      ]
+    }
+  }
+}

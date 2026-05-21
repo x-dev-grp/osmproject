@@ -1,0 +1,40 @@
+[submodule "osm-parent"]
+	path = osm-parent
+	url = https://github.com/x-dev-grp/osm-parent.git
+	branch = pfe
+[submodule "osm-eureka"]
+	path = osm-eureka
+	url = https://github.com/x-dev-grp/osm-eureka.git
+	branch = pfe
+[submodule "osm-sec"]
+	path = osm-sec
+	url = https://github.com/x-dev-grp/osm-sec.git
+	branch = pfe
+[submodule "osm-fin"]
+	path = osm-fin
+	url = https://github.com/x-dev-grp/osm-fin.git
+	branch = pfe
+[submodule "osm-pack"]
+	path = osm-pack
+	url = https://github.com/x-dev-grp/osm-pack.git
+	branch = pfe
+[submodule "osm-prod"]
+	path = osm-prod
+	url = https://github.com/x-dev-grp/osm-prod.git
+	branch = pfe
+[submodule "osm-cond"]
+	path = osm-cond
+	url = https://github.com/x-dev-grp/osm-cond.git
+	branch = pfe
+[submodule "osm-hr"]
+	path = osm-hr
+	url = https://github.com/x-dev-grp/osm-hr.git
+	branch = pfe
+[submodule "osm-gateway"]
+	path = osm-gateway
+	url = https://github.com/x-dev-grp/osm-gateway.git
+	branch = pfe
+[submodule "osm-ms-fe"]
+	path = osm-ms-fe
+	url = https://github.com/x-dev-grp/osm-ms-fe
+	branch = pfe
