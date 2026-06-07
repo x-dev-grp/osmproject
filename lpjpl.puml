@@ -1,0 +1,538 @@
+@startuml
+class com.osmrh.rh.HrServiceApplication {
++ {static} void main(String[])
+}
+
+class com.osmrh.rh.service.ContractService {
+- EmployeeRepository employeeRepository
++ Set<Action> actionsMapping(Contract)
++ ContractDto addContractToEmployee(UUID,ContractDto)
++ List<ContractDto> getContractsByEmployee(UUID)
++ ContractDto updateEmployeeContract(UUID,UUID,ContractDto)
++ void deleteEmployeeContract(UUID,UUID)
+}
+
+
+interface com.osmrh.rh.repo.LeaveRequestRepository {
+}
+enum com.osmrh.rh.enums.MaritalStatus {
++  SINGLE
++  MARRIED
++  DIVORCED
++  WIDOWED
+}
+
+enum com.osmrh.rh.enums.LeaveStatus {
++  PENDING
++  APPROVED
++  REJECTED
++  CANCELLED
+}
+
+interface com.osmrh.rh.repo.PointageRepository {
+}
+class com.osmrh.rh.controller.ContractController {
+- ContractService contractService
+# String getResourceName()
++ ResponseEntity<ApiResponse<Contract,ContractDto>> addContractToEmployee(UUID,ContractDto)
++ ResponseEntity<ApiResponse<Contract,ContractDto>> getContractsByEmployee(UUID)
++ ResponseEntity<ApiResponse<Contract,ContractDto>> updateEmployeeContract(UUID,UUID,ContractDto)
++ ResponseEntity<ApiResponse<Contract,ContractDto>> deleteEmployeeContract(UUID,UUID)
+}
+
+
+class com.osmrh.rh.controller.DepartementController {
+# String getResourceName()
+}
+
+enum com.osmrh.rh.enums.PointageStatus {
++  PRESENT
++  ABSENT
++  ON_LEAVE
+}
+
+class com.osmrh.rh.model.PayRolls {
+- LocalDate periodStart
+- LocalDate periodEnd
+- Double baseSalary
+- Double bonuses
+- Double deduction
+- Double netSalary
+- Boolean paid
+- LocalDate paymentDate
+- Employee employee
++ Employee getEmployee()
++ void setEmployee(Employee)
++ LocalDate getPeriodStart()
++ void setPeriodStart(LocalDate)
++ LocalDate getPeriodEnd()
++ void setPeriodEnd(LocalDate)
++ Double getBaseSalary()
++ void setBaseSalary(Double)
++ Double getBonuses()
++ void setBonuses(Double)
++ Double getDeduction()
++ void setDeduction(Double)
++ Double getNetSalary()
++ void setNetSalary(Double)
++ Boolean getPaid()
++ void setPaid(Boolean)
++ LocalDate getPaymentDate()
++ void setPaymentDate(LocalDate)
+}
+
+
+class com.osmrh.rh.service.PayRollsService {
+}
+class com.osmrh.rh.service.EmployeeService {
++ Set<Action> actionsMapping(Employee)
+}
+
+class com.osmrh.rh.Dtos.ContractDto {
+- Employee employee
+- LocalDate startDate
+- LocalDate endDate
+- long salary
+- PosteDto poste
+- ContractStatus contractStatus
+- ContractType contractType
++ Employee getEmployee()
++ void setEmployee(Employee)
++ LocalDate getStartDate()
++ void setStartDate(LocalDate)
++ LocalDate getEndDate()
++ void setEndDate(LocalDate)
++ ContractType getContractType()
++ long getSalary()
++ void setSalary(long)
++ void setContractType(ContractType)
++ PosteDto getPoste()
++ void setPoste(PosteDto)
++ ContractStatus getContractStatus()
++ void setContractStatus(ContractStatus)
+}
+
+
+interface com.osmrh.rh.repo.ContractRepository {
+}
+class com.osmrh.rh.model.Pointage {
+- LocalDate date
+- LocalTime checkIn
+- LocalTime checkOut
+- Time pointageDuree
+- PointageStatus status
+- Employee employee
++ LocalDate getDate()
++ void setDate(LocalDate)
++ LocalTime getCheckIn()
++ void setCheckIn(LocalTime)
++ LocalTime getCheckOut()
++ void setCheckOut(LocalTime)
++ Time getPointageDuree()
+- void updateDuration()
++ Employee getEmployee()
++ void setEmployee(Employee)
++ PointageStatus getStatus()
++ void setStatus(PointageStatus)
+}
+
+
+class com.osmrh.rh.Dtos.EmployeeDto {
+- String firstName
+- String lastName
+- Gender gender
+- LocalDate birthDate
+- String cin
+- String email
+- String phone
+- String address
+- String city
+- String country
+- LocalDate hireDate
+- String postalCode
+- boolean active
+- MaritalStatus maritalStatus
+- List<ContractDto> contrats
+- DepartmentDto department
+- List<PayRollsDto> payrolls
+- List<PointageDto> pointages
++ String getFirstName()
++ void setFirstName(String)
++ String getLastName()
++ void setLastName(String)
++ Gender getGender()
++ void setGender(Gender)
++ LocalDate getBirthDate()
++ void setBirthDate(LocalDate)
++ String getCin()
++ void setCin(String)
++ String getEmail()
++ void setEmail(String)
++ String getPhone()
++ void setPhone(String)
++ String getAddress()
++ void setAddress(String)
++ String getCity()
++ void setCity(String)
++ String getCountry()
++ void setCountry(String)
++ LocalDate getHireDate()
++ void setHireDate(LocalDate)
++ String getPostalCode()
++ void setPostalCode(String)
++ MaritalStatus getMaritalStatus()
++ void setMaritalStatus(MaritalStatus)
++ List<ContractDto> getContrats()
++ void setContrats(List<ContractDto>)
++ DepartmentDto getDepartment()
++ void setDepartment(DepartmentDto)
++ List<PayRollsDto> getPayrolls()
++ void setPayrolls(List<PayRollsDto>)
++ List<PointageDto> getPointages()
++ void setPointages(List<PointageDto>)
++ boolean isActive()
++ void setActive(boolean)
+}
+
+
+class com.osmrh.rh.Dtos.DepartmentDto {
+- String name
+- String description
+- List<EmployeeDto> employees
+- EmployeeDto manager
++ EmployeeDto getManager()
++ void setManager(EmployeeDto)
++ String getName()
++ void setName(String)
++ String getDescription()
++ void setDescription(String)
++ List<EmployeeDto> getEmployees()
++ void setEmployees(List<EmployeeDto>)
+}
+
+
+class com.osmrh.rh.controller.PointageController {
+# String getResourceName()
+}
+
+class com.osmrh.rh.model.Contract {
+- LocalDate startDate
+- LocalDate endDate
+- long salary
+- Poste poste
+- ContractType contractType
+- ContractStatus contractStatus
+- Employee employee
++ LocalDate getStartDate()
++ void setStartDate(LocalDate)
++ LocalDate getEndDate()
++ void setEndDate(LocalDate)
++ long getSalary()
++ void setSalary(long)
++ Poste getPoste()
++ void setPoste(Poste)
++ ContractType getContractType()
++ void setContractType(ContractType)
++ ContractStatus getContractStatus()
++ void setContractStatus(ContractStatus)
++ Employee getEmployee()
++ void setEmployee(Employee)
+}
+
+
+class com.osmrh.rh.Dtos.PayRollsDto {
+- LocalDate periodStart
+- LocalDate periodEnd
+- Double baseSalary
+- Double bonuses
+- Double deduction
+- Double netSalary
+- Boolean paid
+- LocalDate paymentDate
++ LocalDate getPeriodStart()
++ void setPeriodStart(LocalDate)
++ LocalDate getPeriodEnd()
++ void setPeriodEnd(LocalDate)
++ Double getBaseSalary()
++ void setBaseSalary(Double)
++ Double getBonuses()
++ void setBonuses(Double)
++ Double getDeduction()
++ void setDeduction(Double)
++ Double getNetSalary()
++ void setNetSalary(Double)
++ Boolean getPaid()
++ void setPaid(Boolean)
++ LocalDate getPaymentDate()
++ void setPaymentDate(LocalDate)
+}
+
+
+interface com.osmrh.rh.repo.PosteRepository {
+}
+enum com.osmrh.rh.enums.Gender {
++  MALE
++  FEMALE
+}
+
+class com.osmrh.rh.model.Employee {
+- String firstName
+- String lastName
+- LocalDate hireDate
+- LocalDate birthDate
+- String cin
+- String email
+- String phone
+- String address
+- String postalCode
+- String city
+- String country
+- boolean active
+- Gender gender
+- MaritalStatus maritalStatus
+- List<Contract> contrats
+- Department department
+- List<PayRolls> payrolls
+- List<Pointage> pointages
++ List<Contract> getContrats()
++ void setContrats(List<Contract>)
++ String getFirstName()
++ void setFirstName(String)
++ String getLastName()
++ void setLastName(String)
++ LocalDate getBirthDate()
++ void setBirthDate(LocalDate)
++ String getCin()
++ void setCin(String)
++ String getEmail()
++ void setEmail(String)
++ String getPhone()
++ void setPhone(String)
++ String getAddress()
++ void setAddress(String)
++ String getCity()
++ void setCity(String)
++ String getCountry()
++ void setCountry(String)
++ Gender getGender()
++ void setGender(Gender)
++ MaritalStatus getMaritalStatus()
++ Department getDepartment()
++ void setDepartment(Department)
++ List<PayRolls> getPayrolls()
++ void setPayrolls(List<PayRolls>)
++ List<Pointage> getPointages()
++ void setPointages(List<Pointage>)
++ void setMaritalStatus(MaritalStatus)
++ LocalDate getHireDate()
++ void setHireDate(LocalDate)
++ String getPostalCode()
++ void setPostalCode(String)
++ boolean isActive()
++ void setActive(boolean)
+}
+
+
+enum com.osmrh.rh.enums.LeaveType {
++  ANNUAL
++  SICK
++  MATERNITY
++  PATERNITY
++  UNPAID
++  OTHER
+}
+
+class com.osmrh.rh.model.Department {
+- String name
+- String description
+- Employee manager
+- List<Employee> employees
++ List<Employee> getEmployees()
++ void setEmployees(List<Employee>)
++ String getName()
++ void setName(String)
++ String getDescription()
++ void setDescription(String)
++ Employee getManager()
++ void setManager(Employee)
+}
+
+
+class com.osmrh.rh.controller.PosteController {
+# String getResourceName()
+}
+
+interface com.osmrh.rh.repo.EmployeeRepository {
+}
+class com.osmrh.rh.Dtos.LeaveRequestDto {
+- LocalDate startDate
+- LocalDate endDate
+- String reason
+- LeaveStatus status
+- LeaveType leaveType
++ LocalDate getStartDate()
++ void setStartDate(LocalDate)
++ LocalDate getEndDate()
++ void setEndDate(LocalDate)
++ String getReason()
++ void setReason(String)
++ LeaveStatus getStatus()
++ void setStatus(LeaveStatus)
++ LeaveType getLeaveType()
++ void setLeaveType(LeaveType)
+}
+
+
+interface com.osmrh.rh.repo.PayRollsRepository {
+}
+class com.osmrh.rh.RhApplicationTests {
+~ void contextLoads()
+}
+
+class com.osmrh.rh.service.PosteService {
++ Set<Action> actionsMapping(Poste)
+}
+
+class com.osmrh.rh.controller.LeaveRequestController {
+# String getResourceName()
+}
+
+class com.osmrh.rh.feignClients.financeFeignService {
+}
+class com.osmrh.rh.controller.EmployeeController {
+# String getResourceName()
+}
+
+class com.osmrh.rh.controller.PayRollsController {
+# String getResourceName()
+}
+
+interface com.osmrh.rh.repo.DepartementRepository {
+}
+class com.osmrh.rh.service.departementService {
++ Set<Action> actionsMapping(Department)
+}
+
+class com.osmrh.rh.service.PointageService {
+}
+enum com.osmrh.rh.enums.ContractStatus {
++  ACTIVE
++  EXPIRED
++  SUSPENDED
+}
+
+class com.osmrh.rh.model.Poste {
+- String name
+- String description
++ String getName()
++ void setName(String)
++ String getDescription()
++ void setDescription(String)
+}
+
+
+class com.osmrh.rh.Dtos.PointageDto {
+- LocalDate date
+- LocalTime checkIn
+- LocalTime checkOut
+- PointageStatus status
++ LocalDate getDate()
++ void setDate(LocalDate)
++ LocalTime getCheckIn()
++ void setCheckIn(LocalTime)
++ LocalTime getCheckOut()
++ void setCheckOut(LocalTime)
++ PointageStatus getStatus()
++ void setStatus(PointageStatus)
+}
+
+
+class com.osmrh.rh.model.LeaveRequest {
+- LocalDate startDate
+- LocalDate endDate
+- String reason
+- long duration_days
+- LeaveStatus status
+- LeaveType leaveType
++ long getDuration_days()
++ void setDuration_days(long)
++ LeaveType getLeaveType()
++ void setLeaveType(LeaveType)
++ LocalDate getStartDate()
++ void setStartDate(LocalDate)
++ LocalDate getEndDate()
++ void setEndDate(LocalDate)
++ String getReason()
++ void setReason(String)
++ LeaveStatus getStatus()
++ void setStatus(LeaveStatus)
+}
+
+
+class com.osmrh.rh.Dtos.PosteDto {
+- String name
+- String description
++ String getName()
++ void setName(String)
++ String getDescription()
++ void setDescription(String)
+}
+
+
+interface com.osmrh.rh.feignClients.financeFeignController {
+}
+enum com.osmrh.rh.enums.ContractType {
++  INTERNSHIP
++  CDI
++  CDD
++  STAGE
++  TEMPORARY
+}
+
+class com.osmrh.rh.service.LeaveRequestService {
+}
+
+
+com.xdev.xdevbase.services.impl.BaseServiceImpl <|-- com.osmrh.rh.service.ContractService
+com.xdev.xdevbase.repos.BaseRepository <|-- com.osmrh.rh.repo.LeaveRequestRepository
+com.xdev.xdevbase.repos.BaseRepository <|-- com.osmrh.rh.repo.PointageRepository
+com.xdev.xdevbase.controllers.impl.BaseControllerImpl <|-- com.osmrh.rh.controller.ContractController
+com.xdev.xdevbase.controllers.impl.BaseControllerImpl <|-- com.osmrh.rh.controller.DepartementController
+java.io.Serializable <|.. com.osmrh.rh.model.PayRolls
+com.xdev.xdevbase.entities.BaseEntity <|-- com.osmrh.rh.model.PayRolls
+com.xdev.xdevbase.services.impl.BaseServiceImpl <|-- com.osmrh.rh.service.PayRollsService
+com.xdev.xdevbase.services.impl.BaseServiceImpl <|-- com.osmrh.rh.service.EmployeeService
+com.xdev.xdevbase.dtos.BaseDto <|-- com.osmrh.rh.Dtos.ContractDto
+com.xdev.xdevbase.repos.BaseRepository <|-- com.osmrh.rh.repo.ContractRepository
+java.io.Serializable <|.. com.osmrh.rh.model.Pointage
+com.xdev.xdevbase.entities.BaseEntity <|-- com.osmrh.rh.model.Pointage
+com.xdev.xdevbase.dtos.BaseDto <|-- com.osmrh.rh.Dtos.EmployeeDto
+com.xdev.xdevbase.dtos.BaseDto <|-- com.osmrh.rh.Dtos.DepartmentDto
+com.xdev.xdevbase.controllers.impl.BaseControllerImpl <|-- com.osmrh.rh.controller.PointageController
+java.io.Serializable <|.. com.osmrh.rh.model.Contract
+com.xdev.xdevbase.entities.BaseEntity <|-- com.osmrh.rh.model.Contract
+com.xdev.xdevbase.dtos.BaseDto <|-- com.osmrh.rh.Dtos.PayRollsDto
+com.xdev.xdevbase.repos.BaseRepository <|-- com.osmrh.rh.repo.PosteRepository
+java.io.Serializable <|.. com.osmrh.rh.model.Employee
+com.xdev.xdevbase.entities.BaseEntity <|-- com.osmrh.rh.model.Employee
+java.io.Serializable <|.. com.osmrh.rh.model.Department
+com.xdev.xdevbase.entities.BaseEntity <|-- com.osmrh.rh.model.Department
+com.xdev.xdevbase.controllers.impl.BaseControllerImpl <|-- com.osmrh.rh.controller.PosteController
+com.xdev.xdevbase.repos.BaseRepository <|-- com.osmrh.rh.repo.EmployeeRepository
+com.xdev.xdevbase.dtos.BaseDto <|-- com.osmrh.rh.Dtos.LeaveRequestDto
+com.xdev.xdevbase.repos.BaseRepository <|-- com.osmrh.rh.repo.PayRollsRepository
+com.xdev.xdevbase.services.impl.BaseServiceImpl <|-- com.osmrh.rh.service.PosteService
+com.xdev.xdevbase.controllers.impl.BaseControllerImpl <|-- com.osmrh.rh.controller.LeaveRequestController
+com.xdev.xdevbase.controllers.impl.BaseControllerImpl <|-- com.osmrh.rh.controller.EmployeeController
+com.xdev.xdevbase.controllers.impl.BaseControllerImpl <|-- com.osmrh.rh.controller.PayRollsController
+com.xdev.xdevbase.repos.BaseRepository <|-- com.osmrh.rh.repo.DepartementRepository
+com.xdev.xdevbase.services.impl.BaseServiceImpl <|-- com.osmrh.rh.service.departementService
+com.xdev.xdevbase.services.impl.BaseServiceImpl <|-- com.osmrh.rh.service.PointageService
+java.io.Serializable <|.. com.osmrh.rh.model.Poste
+com.xdev.xdevbase.entities.BaseEntity <|-- com.osmrh.rh.model.Poste
+com.xdev.xdevbase.dtos.BaseDto <|-- com.osmrh.rh.Dtos.PointageDto
+java.io.Serializable <|.. com.osmrh.rh.model.LeaveRequest
+com.xdev.xdevbase.entities.BaseEntity <|-- com.osmrh.rh.model.LeaveRequest
+com.xdev.xdevbase.dtos.BaseDto <|-- com.osmrh.rh.Dtos.PosteDto
+com.xdev.xdevbase.services.impl.BaseServiceImpl <|-- com.osmrh.rh.service.LeaveRequestService
+@enduml

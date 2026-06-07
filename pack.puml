@@ -1,0 +1,1095 @@
+@startuml
+class com.osm.inventory_service.entity.ArticleSec {
+- UUID id
+- String nom
+- CategorieArticle categorie
+- Fournisseur fournisseur
+- Integer stockMinimum
+- Integer stockMaximum
+- Boolean actif
+- UniteMesure um
+- UUID skuId
+- LocalDateTime lotCreatedDate
+- LocalDate lotDdm
+- ArticleConfig configuration
++ void validateConfiguration()
+- CategorieArticle extractCategoryFromConfig(ArticleConfig)
+- void validateBusinessRules()
+}
+
+
+class com.osm.inventory_service.controller.ProduitFinalController {
+- ProduitFinalService produitFinalService
++ <<Create>> ProduitFinalController(BaseService<ProduitFinal,ProduitFinalDto,ProduitFinalDto>,ModelMapper,ProduitFinalService)
++ ResponseEntity<?> getAllProduitsFinaux()
++ ResponseEntity<?> getProduitFinalById(UUID)
++ ResponseEntity<?> createProduitFinal(ProduitFinalDto)
++ ResponseEntity<?> updateProduitFinal(UUID,ProduitFinalDto)
++ ResponseEntity<?> getActiveProduitsFinaux()
++ ResponseEntity<?> getProduitsFinauxByType(ProduitFinalType)
++ ResponseEntity<?> desactiverProduitFinal(UUID)
++ ResponseEntity<?> activerProduitFinal(UUID)
++ ResponseEntity<?> supprimerProduitFinal(UUID)
+# String getResourceName()
++ ResponseEntity<?> resolve(String)
+}
+
+
+class com.osm.inventory_service.service.ProduitFinalService {
+- ProduitFinalRepository produitFinalRepository
+- ModelMapper modelMapper
++ <<Create>> ProduitFinalService(BaseRepository<ProduitFinal>,ProduitFinalRepository,ModelMapper)
++ List<ProduitFinalDto> getAllProduitsFinaux()
++ ProduitFinalDto getProduitFinalById(UUID)
++ List<ProduitFinalDto> getAllActiveProduitsFinaux()
++ List<ProduitFinalDto> getProduitsFinauxByType(ProduitFinalType)
++ ProduitFinalDto createProduitFinal(ProduitFinalDto)
++ ProduitFinalDto updateProduitFinal(UUID,ProduitFinalDto)
++ void desactiverProduitFinal(UUID)
++ void activerProduitFinal(UUID)
++ void supprimerProduitFinal(UUID)
+- void applyProduitFinalDto(ProduitFinal,ProduitFinalDto,String,String)
+- String resolveName(ProduitFinalDto)
+- String resolveUnitOfMeasure(ProduitFinalDto,ProduitFinalType)
+- String resolveHarvestCampaign(ProduitFinalDto,String)
+- void ensureNameIsAvailable(String,UUID)
+- void ensureCodeIsAvailable(String,UUID)
+- String trimToNull(String)
+}
+
+
+interface com.osm.inventory_service.repository.LigneConditionnementRepository {
+~ List<LigneConditionnement> findByEtat(Statue)
+~ boolean existsByCode(String)
+}
+
+class com.osm.inventory_service.dto.FournisseurDto {
+- String code
+- String nom
+- String nomCommercial
+- String email
+- String telephone
+- String fax
+- String siteWeb
+- String numeroTva
+- String adresse
+- String ville
+- String codePostal
+- String pays
+- String contactNom
+- String contactPrenom
+- String contactEmail
+- String contactTelephone
+- CategorieFournisseur categorieFournisseur
+- Integer delaiLivraisonMoyen
+- String conditionsPaiement
+- Currency currency
+- Boolean actif
+- String certifications
+- LocalDateTime dateDerniereCommande
+}
+
+class com.osm.inventory_service.service.LigneConditionnementService {
+- LigneConditionnementRepository ligneRepository
+- ModelMapper modelMapper
++ <<Create>> LigneConditionnementService(BaseRepository<LigneConditionnement>,LigneConditionnementRepository,ModelMapper)
++ List<LigneConditionnementDto> getAllLignes()
++ LigneConditionnementDto getLigneById(UUID)
++ LigneConditionnementDto createLigne(LigneConditionnementDto)
++ LigneConditionnementDto updateLigne(UUID,LigneConditionnementDto)
++ void desactiverLigne(UUID)
++ void activerLigne(UUID)
++ LigneConditionnementDto changerEtat(UUID,Statue)
++ List<LigneConditionnementDto> getLignesActives()
+- String genererCodeLigne()
+}
+
+
+class com.osm.inventory_service.controller.ArticleSecController {
+- ArticleSecService articleService
++ <<Create>> ArticleSecController(BaseService<ArticleSec,ArticleSecDto,ArticleSecDto>,ModelMapper,ArticleSecService)
++ ResponseEntity<?> getAllArticles(CategorieArticle)
++ ResponseEntity<?> getActiveArticles()
++ ResponseEntity<List<Map<String,String>>> getUnitesMesure()
+- String formatUniteMesureLabel(UniteMesure)
++ ResponseEntity<?> getArticleById(UUID)
++ ResponseEntity<?> createArticle(ArticleSecDto)
++ ResponseEntity<?> updateArticle(UUID,ArticleSecDto)
++ ResponseEntity<?> activerArticle(UUID)
++ ResponseEntity<?> desactiverArticle(UUID)
+# String getResourceName()
++ ResponseEntity<?> resolve(String)
++ ResponseEntity<byte[]> getQrImage(UUID)
+}
+
+
+class com.osm.inventory_service.dto.EmplacementStockDto {
+- String code
+- String nom
+- TypeEmplacement typeEmplacement
+- String capaciteMaximale
+- String capaciteActuelle
+- String zone
+- Boolean disponible
+- String reservePour
+- String conditionsSpeciales
+- Double temperatureMin
+- Double temperatureMax
+- String description
+- String notes
+- Boolean actif
+- CategorieArticle categorieArticleStocke
+}
+
+enum com.osm.inventory_service.Enum.TypeEmplacement {
++  CHAMBRE_FROIDE
++  CONGELATEUR
++  ZONE_DANGEREUSE
++  ZONE_SECURISEE
++  QUAI_RECEPTION
++  QUAI_EXPEDITION
++  ZONE_CONTROLE
++  ZONE_RECONDITIONNEMENT
+}
+
+class com.osm.inventory_service.service.BomService {
+- BomRepository bomRepository
+- ProduitFinalRepository produitFinalRepository
+- ArticleSecRepository articleRepository
++ <<Create>> BomService(BaseRepository<BOM>,BomRepository,ProduitFinalRepository,CodeGenerator,ArticleSecRepository,ModelMapper)
++ Class<BOM> getEntityClass()
++ BOMDto getBomById(UUID)
++ List<BOMDto> getBomsByProduct(UUID)
++ BOMDto getActiveBomForProduct(UUID)
++ BOMDto activateBom(UUID)
++ BOMDto createBom(BOMDto)
++ BOMDto updateBom(UUID,BOMDto)
++ List<BOMDto> getAllBoms()
++ void deleteBom(UUID)
+- void validateBomDto(BOMDto,boolean)
+- List<BomLine> buildLines(BOM,List<BomLineDto>)
+- BOMDto convertToDto(BOM)
+}
+
+
+class com.osm.inventory_service.dto.StatistiquesDTO {
+- Long totalArticles
+- Long articlesEnAlerte
+- Double valeurTotaleStock
+- Double tauxRupture
+- Integer joursCouvertureMoyen
+- Long bonsEnAttente
+- Long bonsValidesMois
+- Double montantAchatsMois
+- Double delaiValidationMoyen
+- List<Map<String,Object>> topArticlesValeur
+- List<Map<String,Object>> articlesRuptureFrequente
+- Map<String,Integer> mouvementsParMois
+- Map<String,Double> achatsParFournisseur
+- Map<String,Integer> alertesParCategorie
+}
+
+enum com.osm.inventory_service.Enum.TypeMouvement {
++  ENTREE
++  SORTIE
++  AJUSTEMENT
+}
+
+class com.osm.inventory_service.service.AuditService {
+- EntityManager entityManager
++ List<AuditDto> getAllAudits()
+}
+
+
+class com.osm.inventory_service.dto.ProduitFinalDto {
+~ UUID id
+~ UUID tenantId
+~ Boolean isDeleted
+~ String createdBy
+~ LocalDateTime createdDate
+~ String lastModifiedBy
+~ LocalDateTime lastModifiedDate
+~ UUID externalId
+~ String name
+~ String code
+~ ProduitFinalType type
+~ String category
+~ String unitOfMeasure
+~ String description
+~ String grade
+~ String origin
+~ String harvestCampaign
+~ Float volume
+~ String packagingType
+~ String barcode
+~ Integer unitsPerCarton
+~ Integer cartonsPerPallet
+~ Float netWeight
+~ Float grossWeight
+~ String brand
+~ Float density
+~ String storageUnit
+- Boolean actif
++ Integer getUnitesParCols()
++ void setUnitesParCols(Integer)
++ Integer getColisParPalette()
++ void setColisParPalette(Integer)
+}
+
+
+class com.osm.inventory_service.service.BonCommandeService {
+- BonCommandeRepository bonCommandeRepository
+- LigneBonCommandeRepository ligneBonCommandeRepository
+- ArticleSecService articleSecService
+- StockSecService stockSecService
+- {static} Logger logger
++ <<Create>> BonCommandeService(BaseRepository<BonCommande>,BonCommandeRepository,LigneBonCommandeRepository,ArticleSecService,StockSecService,CodeGenerator,ModelMapper)
+- BonCommandeDto convertToDto(BonCommande)
+- String genererNumeroBC()
++ List<BonCommandeDto> getAllBonsCommande()
++ BonCommandeDto getBonCommandeById(UUID)
++ BonCommandeDto createBonCommande(BonCommandeDto)
++ BonCommandeDto validerBonCommande(UUID)
++ BonCommandeDto refuserBonCommande(UUID,String)
++ BonCommandeDto receptionnerCommande(UUID,List<LigneBonCommandeDto>)
+}
+
+
+enum com.osm.inventory_service.Enum.StatutBonCommande {
++  EN_ATTENTE
++  VALIDE
++  RECU
++  PARTIELLEMENT_RECU
++  REFUSE
+}
+
+class com.osm.inventory_service.entity.Fournisseur {
+- String code
+- String nom
+- String nomCommercial
+- String email
+- String telephone
+- String fax
+- String siteWeb
+- String numeroTva
+- String adresse
+- String ville
+- String codePostal
+- String pays
+- String contactNom
+- String contactPrenom
+- String contactEmail
+- String contactTelephone
+- Currency currency
+- Integer delaiLivraisonMoyen
+- String conditionsPaiement
+- Boolean actif
+- String certifications
+- java.time.LocalDateTime dateDerniereCommande
+- CategorieFournisseur categorieFournisseur
+}
+
+class com.osm.inventory_service.dto.ArticleCritiqueDto {
+- UUID id
+- String sku
+- String nom
+- Integer stockActuel
+- Integer stockMinimum
+- String categorie
+- Integer stockDisponible
+}
+
+interface com.osm.inventory_service.repository.BomLineRepository {
+~ long countByArticle_Id(UUID)
+}
+
+class com.osm.inventory_service.service.StatistiqueService {
+- {static} int CHART_MONTHS
+- ArticleSecRepository articleRepository
+- StockSecRepository stockRepository
+- MouvementStockSecRepository mouvementRepository
+- BonCommandeRepository bonCommandeRepository
++ StockDashboardPayloadDto getDashboardPayload(int)
++ StatistiquesDTO getStatistiquesCompletes()
++ List<ArticleCritiqueDto> getArticlesCritiques()
++ List<MouvementRecentDto> getMouvementsRecents(int)
+- StatistiquesDTO buildStatistiques()
+- List<ArticleCritiqueDto> listArticlesCritiques(int)
+- List<MouvementRecentDto> listMouvementsRecents(int)
+- MouvementRecentDto toMouvementRecentDto(MouvementStockSec)
+- Map<String,Integer> buildMouvementsParMois(int)
+- Map<String,Integer> buildAlertesParCategorie(List<ArticleSec>,Map<java.util.UUID,StockSec>)
+- long countBonsEnAttente()
+- int safe(Integer)
+}
+
+
+class com.osm.inventory_service.config.ColisConfig {
+- UUID unitArticleId
+- int unitsPerColis
+- Dimensions dimensions
+- double maxWeightKg
+}
+
+class com.osm.inventory_service.service.FournisseurService {
+- FournisseurRepository fournisseurRepository
+- ModelMapper modelMapper
++ <<Create>> FournisseurService(BaseRepository<Fournisseur>,FournisseurRepository,ModelMapper)
++ List<FournisseurDto> getAllFournisseurs()
++ FournisseurDto getFournisseurById(UUID)
++ FournisseurDto createFournisseur(FournisseurDto)
++ FournisseurDto updateFournisseur(UUID,FournisseurDto)
++ FournisseurDto activerFournisseur(UUID)
++ FournisseurDto desactiverFournisseur(UUID)
+- String genererCodeFournisseur()
++ List<FournisseurDto> getActiveFournisseurs()
+}
+
+
+class com.osm.inventory_service.controller.StockSecController {
+- StockSecService stockService
++ <<Create>> StockSecController(BaseService<StockSec,StockSecDto,StockSecDto>,ModelMapper,StockSecService)
++ ResponseEntity<List<ArticleStockSummaryDto>> getStockSummary()
++ ResponseEntity<?> getAllStocks()
++ ResponseEntity<?> getStockById(UUID)
++ ResponseEntity<?> getStockByArticle(UUID)
++ ResponseEntity<?> getStocksByEmplacement(UUID)
++ ResponseEntity<?> getStocksByZone(String)
++ ResponseEntity<?> getStocksAvecEmplacementDisponible()
++ ResponseEntity<?> createStockForArticle(UUID)
++ ResponseEntity<?> entreeStock(UUID,Map<String,Object>)
++ ResponseEntity<?> sortieStock(UUID,Map<String,Object>)
++ ResponseEntity<?> ajusterStock(UUID,Map<String,Object>)
++ ResponseEntity<?> reserverStock(UUID,Map<String,Object>)
++ ResponseEntity<?> annulerReservation(UUID,Map<String,Object>)
++ ResponseEntity<?> consommerReservation(UUID,Map<String,Object>)
++ ResponseEntity<?> assignerEmplacement(UUID,UUID)
++ ResponseEntity<?> retirerEmplacement(UUID)
++ ResponseEntity<?> transfererEmplacement(UUID,UUID)
++ ResponseEntity<?> getAllMouvements()
++ ResponseEntity<?> getMouvementsByArticle(UUID)
+# String getResourceName()
++ ResponseEntity<?> resolve(String)
+}
+
+
+class com.osm.inventory_service.service.ArticleSecService {
+- ArticleSecRepository articleRepository
+- FournisseurRepository fournisseurRepository
+- ModelMapper modelMapper
+- StockSecService stockSecService
+- StockSecRepository stockSecRepository
+- BomLineRepository bomLineRepository
+- ObjectMapper objectMapper
++ <<Create>> ArticleSecService(BaseRepository<ArticleSec>,ArticleSecRepository,FournisseurRepository,ModelMapper,StockSecService,StockSecRepository,BomLineRepository,ObjectMapper)
++ ArticleSec getArticleEntityById(UUID)
++ List<ArticleSecDto> getAllArticles()
++ ArticleSecDto getArticleById(UUID)
++ ArticleSecDto createArticle(ArticleSecDto)
++ ArticleSecDto updateArticle(UUID,ArticleSecDto)
++ List<ArticleSecDto> getAllActiveArticles()
++ List<ArticleSecDto> getArticlesByCategorie(CategorieArticle)
++ ArticleSecDto activerArticle(UUID)
++ ArticleSecDto desactiverArticle(UUID)
++ Set<Action> actionsMapping(ArticleSec)
+- ArticleSec convertToEntity(ArticleSecDto)
+- ArticleSecDto convertToDto(ArticleSec)
+# String getEntityType()
+# String getLabel(ArticleSec)
+# String getStatus(ArticleSec)
+# String getMobileRoute()
++ QrResolveResponse resolve(String)
+}
+
+
+class com.osm.inventory_service.dto.ArticleSecDto {
+- UUID id
+- UUID tenantId
+- Boolean isDeleted
+- String createdBy
+- LocalDateTime createdDate
+- String lastModifiedBy
+- LocalDateTime lastModifiedDate
+- UUID externalId
+- UniteMesure um
+- String nom
+- CategorieArticle categorie
+- Integer stockMinimum
+- Integer stockMaximum
+- Boolean actif
+- FournisseurDto fournisseur
+- String publicCode
+- String qrUrl
+- String qrImageBase64
+- Map<String,Object> configuration
+}
+
+interface com.osm.inventory_service.repository.StockSecRepository {
+~ Optional<StockSec> findByArticleId(UUID)
+~ List<StockSec> findByEmplacementId(UUID)
+~ List<StockSec> findByZone(String)
+~ List<StockSec> findByEmplacementDisponible()
+}
+
+class com.osm.inventory_service.dto.BonCommandeDto {
+~ UUID id
+~ UUID tenantId
+~ Boolean isDeleted
+~ String createdBy
+~ LocalDateTime createdDate
+~ String lastModifiedBy
+~ LocalDateTime lastModifiedDate
+~ UUID externalId
+~ String numeroBC
+~ LocalDateTime dateValidation
+~ LocalDateTime dateReceptionPrevue
+~ StatutBonCommande status
+~ List<LigneBonCommandeDto> lignes
+~ String motifRefus
+}
+
+class com.osm.inventory_service.service.MaterialNeedsService {
+- BomRepository bomRepository
+- StockSecRepository stockRepository
+- ArticleSecRepository articleRepository
++ <<Create>> MaterialNeedsService(BomRepository,StockSecRepository,ArticleSecRepository)
++ List<MaterialNeedLineDto> computeForBom(UUID,double)
+- double calculateNeededQuantity(BomLine,double)
+- int calculateUnitsPerPalette(PaletteConfig)
+- void fillStock(MaterialNeedLineDto,StockSec)
+- int safe(Integer)
+}
+
+
+class com.osm.inventory_service.entity.ProduitFinal {
+- String name
+- String code
+- ProduitFinalType type
+- String category
+- String unitOfMeasure
+- String description
+- String grade
+- String origin
+- String harvestCampaign
+- Float volume
+- String packagingType
+- String barcode
+- Integer unitsPerCarton
+- Integer cartonsPerPallet
+- Float netWeight
+- Float grossWeight
+- String brand
+- Float density
+- String storageUnit
+- Boolean actif
++ Integer getUnitesParCols()
++ void setUnitesParCols(Integer)
++ Integer getColisParPalette()
++ void setColisParPalette(Integer)
+}
+
+
+interface com.osm.inventory_service.repository.EmplacementStockRepository {
+~ Optional<EmplacementStock> findByCode(String)
+~ List<EmplacementStock> findByTypeEmplacement(TypeEmplacement)
+~ List<EmplacementStock> findByZone(String)
+~ List<EmplacementStock> findByDisponibleTrue()
+~ List<EmplacementStock> findDisponiblesParZone(String)
+~ List<EmplacementStock> findReservesPour(String)
+~ List<EmplacementStock> findEmplacementsTemperatureControlee()
+~ boolean existsByCode(String)
+}
+
+class com.osm.inventory_service.entity.EmplacementStock {
+- String code
+- String nom
+- TypeEmplacement typeEmplacement
+- String capaciteMaximale
+- String capaciteActuelle
+- String zone
+- Boolean disponible
+- String reservePour
+- String conditionsSpeciales
+- Double temperatureMin
+- Double temperatureMax
+- String description
+- String notes
+- Boolean actif
+- CategorieArticle categorieArticleStocke
+}
+
+class com.osm.inventory_service.entity.MouvementStockSec {
+- ArticleSec article
+- Integer quantite
+- TypeMouvement typeMouvement
+- String motif
+- LocalDateTime dateMouvement
+- String referenceType
+- UUID referenceId
+}
+
+class com.osm.inventory_service.controller.BomController {
+- BomService bomService
+- MaterialNeedsService materialNeedsService
++ <<Create>> BomController(BaseService<BOM,BOMDto,BOMDto>,ModelMapper,BomService,MaterialNeedsService)
++ ResponseEntity<?> getAllBoms()
++ ResponseEntity<?> getBomById(UUID)
++ ResponseEntity<?> getBomsByProduct(UUID)
++ ResponseEntity<?> getActiveBomForProduct(UUID)
++ ResponseEntity<?> activateBom(UUID)
++ ResponseEntity<List<MaterialNeedLineDto>> getMaterialNeeds(UUID,double)
++ ResponseEntity<?> createBom(BOMDto,String)
++ ResponseEntity<?> updateBom(UUID,BOMDto)
++ ResponseEntity<?> deleteBom(UUID)
+# String getResourceName()
++ ResponseEntity<?> resolve(String)
+}
+
+
+interface com.osm.inventory_service.repository.ProduitFinalRepository {
+~ Optional<ProduitFinal> findByIdAndIsDeletedFalse(UUID)
+~ Optional<ProduitFinal> findByNameAndIsDeletedFalse(String)
+~ Optional<ProduitFinal> findByCodeAndIsDeletedFalse(String)
+~ List<ProduitFinal> findByIsDeletedFalse()
+~ List<ProduitFinal> findByActifTrueAndIsDeletedFalse()
+~ List<ProduitFinal> findByTypeAndIsDeletedFalse(ProduitFinalType)
+}
+
+class com.osm.inventory_service.dto.MaterialNeedLineDto {
+- UUID articleId
+- String articleName
+- String unitOfMeasure
+- double quantityPerUnit
+- double quantityNeeded
+- int quantityNeededRounded
+- Integer quantiteActuelle
+- Integer quantiteReservee
+- Integer quantiteDisponible
+- boolean sufficient
+}
+
+class com.osm.inventory_service.controller.AuditController {
+- AuditService auditService
++ <<Create>> AuditController(AuditService)
++ ResponseEntity<List<AuditDto>> getAllAudits()
+}
+
+
+enum com.osm.inventory_service.Enum.Statue {
++  ACTIF
++  INACTIF
++  EN_MAINTENANCE
++  EN_PANNE
+}
+
+class com.osm.inventory_service.service.StockSecService {
+- StockSecRepository stockRepository
+- MouvementStockSecRepository mouvementStockSecRepository
+- ArticleSecService articleSecService
+- EmplacementStockRepository emplacementRepository
+- ModelMapper modelMapper
++ <<Create>> StockSecService(BaseRepository<StockSec>,StockSecRepository,MouvementStockSecRepository,ArticleSecService,EmplacementStockRepository,ModelMapper)
+- int safe(Integer)
+- void validateStockInvariants(StockSec,String)
+- StockSec saveWithValidation(StockSec,String)
+- StockSecDto convertToDto(StockSec)
++ StockSecDto reserverStock(UUID,Integer)
++ StockSecDto annulerReservation(UUID,Integer)
++ StockSecDto consommerReservation(UUID,Integer,String)
++ StockSecDto consommerReservation(UUID,Integer,String,String,UUID)
++ StockSec getStockEntityById(UUID)
++ List<StockSecDto> getAllStocks()
++ StockSecDto getStockById(UUID)
++ StockSecDto getStockByArticle(UUID)
++ StockSecDto createStockForArticle(UUID)
++ StockSecDto entreeStock(UUID,Integer,String)
++ StockSecDto sortieStock(UUID,Integer,String)
++ StockSecDto sortieStock(UUID,Integer,String,String,UUID)
++ List<ArticleStockSummaryDto> getAllStockSummaries()
+- void recordMouvement(StockSec,int,TypeMouvement,String,String,UUID)
++ StockSecDto ajusterStock(UUID,Integer,String)
++ List<MouvementStockSecDto> getAllMouvementsDto()
++ List<MouvementStockSecDto> getMouvementsByArticleDto(UUID)
++ List<StockSecDto> getStocksByEmplacement(UUID)
++ List<StockSecDto> getStocksByZone(String)
++ List<StockSecDto> getStocksAvecEmplacementDisponible()
++ StockSecDto assignerEmplacement(UUID,UUID)
++ StockSecDto transfererEmplacement(UUID,UUID)
+- void validateEmplacementAssignable(StockSec,EmplacementStock)
+- void validateEmplacementCategorie(StockSec,EmplacementStock)
++ StockSecDto retirerEmplacement(UUID)
++ StockSecDto getOrCreateStockByArticle(UUID)
++ Set<Action> actionsMapping(StockSec)
+}
+
+
+class com.osm.inventory_service.entity.LigneBonCommande {
+- BonCommande bonCommande
+- ArticleSec article
+- Integer quantiteCommandee
+- Integer quantiteRecue
+- BigDecimal prixUnitaire
+- String remarque
+}
+
+class com.osm.inventory_service.service.EmplacementStockService {
+- EmplacementStockRepository emplacementRepository
+- ModelMapper modelMapper
++ <<Create>> EmplacementStockService(BaseRepository<EmplacementStock>,EmplacementStockRepository,ModelMapper)
++ List<EmplacementStockDto> getAllEmplacements()
++ EmplacementStockDto getEmplacementById(UUID)
++ List<EmplacementStockDto> getEmplacementsReservesPour(String)
++ EmplacementStockDto createEmplacement(EmplacementStockDto)
++ EmplacementStockDto activerEmplacement(UUID)
++ EmplacementStockDto desactiverEmplacement(UUID)
++ EmplacementStockDto updateEmplacement(UUID,EmplacementStockDto)
++ EmplacementStockDto reserverEmplacement(UUID,String)
++ EmplacementStockDto libererEmplacement(UUID)
++ EmplacementStockDto mettreAJourCapacite(UUID,String)
++ void deleteEmplacement(UUID)
+- String generateUniqueCode()
+}
+
+
+interface com.osm.inventory_service.repository.LigneBonCommandeRepository {
+~ void deleteByBonCommandeId(UUID)
+}
+
+class com.osm.inventory_service.dto.StockSecDto {
+- UUID articleId
+- ArticleSecDto article
+- Integer quantiteActuelle
+- Integer quantiteReservee
+- Integer quantiteDisponible
+- UUID emplacementId
+- EmplacementStockDto emplacement
+}
+
+class com.osm.inventory_service.config.EmballageConfig {
+- String sousType
+- String material
+- Dimensions dimensions
+- Boolean clientBranding
+- Double poidsGrammes
+}
+
+class com.osm.inventory_service.dto.MouvementRecentDto {
+- UUID id
+- TypeMouvement typeMouvement
+- Integer quantite
+- LocalDateTime dateMouvement
+- String motif
+- UUID articleId
+- String articleSku
+- String articleNom
+- String uniteMesure
+}
+
+class com.osm.inventory_service.entity.BOM {
+- ProduitFinal produitFinal
+- String version
+- boolean active
+- List<BomLine> lines
+}
+
+class com.osm.inventory_service.controller.BonCommandeController {
+- {static} Logger logger
+- BonCommandeService bonCommandeService
++ <<Create>> BonCommandeController(BaseService<BonCommande,BonCommandeDto,BonCommandeDto>,ModelMapper,BonCommandeService)
++ ResponseEntity<ApiResponse<BonCommande,BonCommandeDto>> getAllBonsCommande()
++ ResponseEntity<ApiResponse<BonCommande,BonCommandeDto>> getBonCommandeById(UUID)
++ ResponseEntity<ApiResponse<BonCommande,BonCommandeDto>> createBonCommande(BonCommandeDto)
++ ResponseEntity<ApiResponse<BonCommande,BonCommandeDto>> validerBonCommande(UUID)
++ ResponseEntity<ApiResponse<BonCommande,BonCommandeDto>> refuserBonCommande(UUID,Map<String,String>)
++ ResponseEntity<ApiResponse<BonCommande,BonCommandeDto>> receptionnerLignesBon(UUID,List<LigneBonCommandeDto>)
+- void validateBonCommandeDto(BonCommandeDto)
+# String getResourceName()
++ ResponseEntity<?> resolve(String)
+}
+
+
+class com.osm.inventory_service.config.UniteConfig {
+- String material
+- int volumeMl
+- String color
+- String neckType
+- int weightGr
+}
+
+class com.osm.inventory_service.entity.LigneConditionnement {
+- String code
+- String nom
+- String description
+- Statue etat
+- Integer vitesseNominale
+- Integer tempsPreparation
+- Integer tempsNettoyage
+- String responsable
+- Date dateDerniereMaintenance
+- Date dateProchaineMaintenance
+- String notes
+- boolean actif
+}
+
+class com.osm.inventory_service.dto.LigneConditionnementDto {
+- String code
+- String nom
+- String description
+- Statue etat
+- Integer vitesseNominale
+- Integer tempsPreparation
+- Integer tempsNettoyage
+- String responsable
+- Date dateDerniereMaintenance
+- Date dateProchaineMaintenance
+- String notes
+- boolean actif
+}
+
+class com.osm.inventory_service.controller.LigneConditionnementController {
+- LigneConditionnementService ligneService
++ <<Create>> LigneConditionnementController(BaseService<LigneConditionnement,LigneConditionnementDto,LigneConditionnementDto>,ModelMapper,LigneConditionnementService)
++ ResponseEntity<?> getLigneById(UUID)
++ ResponseEntity<?> getAllLignes()
++ ResponseEntity<?> createLigne(LigneConditionnementDto)
++ ResponseEntity<?> updateLigne(UUID,LigneConditionnementDto)
++ ResponseEntity<?> desactiverLigne(UUID)
++ ResponseEntity<?> activerLigne(UUID)
++ ResponseEntity<?> changerEtat(UUID,Map<String,Statue>)
++ ResponseEntity<?> getLignesActives()
+# String getResourceName()
++ ResponseEntity<?> resolve(String)
+}
+
+
+class com.osm.inventory_service.controller.FournisseurController {
+- FournisseurService fournisseurService
++ <<Create>> FournisseurController(BaseService<Fournisseur,FournisseurDto,FournisseurDto>,ModelMapper,FournisseurService)
++ ResponseEntity<List<FournisseurDto>> getAllFournisseurs()
++ ResponseEntity<FournisseurDto> getFournisseurById(UUID)
++ ResponseEntity<List<FournisseurDto>> getActiveFournisseurs()
++ ResponseEntity<FournisseurDto> createFournisseur(FournisseurDto)
++ ResponseEntity<?> updateFournisseur(UUID,FournisseurDto)
++ ResponseEntity<FournisseurDto> activerFournisseur(UUID)
++ ResponseEntity<FournisseurDto> desactiverFournisseur(UUID)
+# String getResourceName()
++ ResponseEntity<?> resolve(String)
+}
+
+
+interface com.osm.inventory_service.repository.BonCommandeRepository {
+~ List<BonCommande> findByStatus(StatutBonCommande)
+~ Long countBonCommandesByStatus(StatutBonCommande)
+~ long countByStatusNotDeleted(StatutBonCommande)
+~ boolean existsByNumeroBC(String)
+}
+
+interface com.osm.inventory_service.repository.ArticleSecRepository {
+~ boolean existsByNomAndFournisseur(String,Fournisseur)
+~ List<ArticleSec> findByActifTrue()
+~ List<ArticleSec> findByCategorie(CategorieArticle)
+~ List<ArticleSec> findAllActiveNotDeleted()
+~ long countActiveNotDeleted()
+}
+
+class com.osm.inventory_service.dto.MouvementStockSecDto {
+~ UUID id
+~ UUID tenantId
+~ Boolean isDeleted
+~ String createdBy
+~ LocalDateTime createdDate
+~ String lastModifiedBy
+~ LocalDateTime lastModifiedDate
+~ UUID externalId
+~ ArticleSecDto article
+~ Integer quantite
+~ TypeMouvement typeMouvement
+~ String motif
+~ LocalDateTime dateMouvement
+}
+
+class com.osm.inventory_service.controller.EmplacementStockController {
+- {static} Logger log
+- EmplacementStockService emplacementService
++ <<Create>> EmplacementStockController(BaseService<EmplacementStock,EmplacementStockDto,EmplacementStockDto>,ModelMapper,EmplacementStockService)
++ ResponseEntity<ApiResponse<EmplacementStock,EmplacementStockDto>> getAllEmplacements()
++ ResponseEntity<ApiResponse<EmplacementStock,EmplacementStockDto>> getEmplacementById(UUID)
++ ResponseEntity<ApiResponse<EmplacementStock,EmplacementStockDto>> activerEmplacement(UUID)
++ ResponseEntity<ApiResponse<EmplacementStock,EmplacementStockDto>> desactiverEmplacement(UUID)
++ ResponseEntity<ApiResponse<EmplacementStock,EmplacementStockDto>> getEmplacementsReservesPour(String)
++ ResponseEntity<ApiResponse<EmplacementStock,EmplacementStockDto>> createEmplacement(EmplacementStockDto)
++ ResponseEntity<ApiResponse<EmplacementStock,EmplacementStockDto>> updateEmplacement(UUID,EmplacementStockDto)
++ ResponseEntity<ApiResponse<EmplacementStock,EmplacementStockDto>> reserverEmplacement(UUID,Map<String,String>)
++ ResponseEntity<ApiResponse<EmplacementStock,EmplacementStockDto>> libererEmplacement(UUID)
++ ResponseEntity<ApiResponse<EmplacementStock,EmplacementStockDto>> mettreAJourCapacite(UUID,Map<String,String>)
++ ResponseEntity<ApiResponse<EmplacementStock,EmplacementStockDto>> deleteEmplacement(UUID)
++ ResponseEntity<?> resolve(String)
+# String getResourceName()
+}
+
+
+class com.osm.inventory_service.InventoryServiceApplication {
++ {static} void main(String[])
+}
+
+class com.osm.inventory_service.entity.BomLine {
+- BOM bom
+- ArticleSec article
+- double quantity
+- UniteMesure unitOfMeasure
+}
+
+class com.osm.inventory_service.entity.StockSec {
+- ArticleSec article
+- Integer quantiteActuelle
+- EmplacementStock emplacement
+- String reservePour
+- LocalDateTime reserveDate
+- Integer quantiteReservee
+- Integer quantiteDisponible
+}
+
+class com.osm.inventory_service.config.Dimensions {
+- double length
+- double width
+- double height
+}
+
+interface com.osm.inventory_service.repository.BomRepository {
+~ List<BOM> findByProduitFinalId(UUID)
+~ Optional<BOM> findFirstByProduitFinalIdAndActiveTrue(UUID)
+~ long countByProduitFinalId(UUID)
+}
+
+class com.osm.inventory_service.dto.StockDashboardPayloadDto {
+- StatistiquesDTO statistiques
+- List<ArticleCritiqueDto> articlesCritiques
+- List<MouvementRecentDto> mouvementsRecents
+}
+
+enum com.osm.inventory_service.Enum.CategorieArticle {
++  EMBALLAGE
++  CONSOMMABLE
++  UNITE
++  COLIS
++  PALETTE
++ {static} CategorieArticle fromValue(String)
+}
+
+
+class com.osm.inventory_service.dto.LigneBonCommandeDto {
+~ UUID id
+~ UUID tenantId
+~ Boolean isDeleted
+~ String createdBy
+~ LocalDateTime createdDate
+~ String lastModifiedBy
+~ LocalDateTime lastModifiedDate
+~ UUID externalId
+~ ArticleSecDto article
+~ Integer quantiteCommandee
+~ Integer quantiteRecue
+~ BigDecimal prixUnitaire
+~ String remarque
+- UUID bonCommandeId
+- UUID articleId
+}
+
+interface com.osm.inventory_service.repository.MouvementStockSecRepository {
+~ List<MouvementStockSec> findByArticleId(UUID)
+~ List<MouvementStockSec> findRecentNotDeleted(Pageable)
+~ List<MouvementStockSec> findByDateMouvementBetweenNotDeleted(LocalDateTime,LocalDateTime)
+}
+
+class com.osm.inventory_service.dto.BomLineDto {
+- BOM bom
+- ArticleSec article
+- UUID articleId
+- String articleName
+- double quantity
+- UniteMesure unitOfMeasure
+}
+
+class com.osm.inventory_service.dto.ArticleStockSummaryDto {
+- UUID articleId
+- Integer quantiteActuelle
+- Integer quantiteReservee
+- Integer quantiteDisponible
+- Boolean belowMinimum
+}
+
+enum com.osm.inventory_service.Enum.CategorieFournisseur {
++  MATIERES_PREMIERES
++  EMBALLAGES
++  PRODUITS_FINIS
++  ETIQUETTES
++  BOUCHONS
++  CAPSULES
++  OPERCULES
++  FILMS
++  CARTONS
++  PALETTES
++  SERVICES
++  TRANSPORT
++  AUTRE
+}
+
+interface com.osm.inventory_service.repository.FournisseurRepository {
+~ boolean existsByEmail(String)
+~ boolean existsByTelephone(String)
+~ boolean existsByNumeroTva(String)
+~ List<Fournisseur> findByActifTrue()
+}
+
+class com.osm.inventory_service.exception.ResourceNotFoundException {
++ <<Create>> ResourceNotFoundException(String)
+}
+
+class com.osm.inventory_service.entity.BonCommande {
+- String numeroBC
+- String motifRefus
+- LocalDateTime dateValidation
+- LocalDateTime dateReceptionPrevue
+- StatutBonCommande status
+- List<LigneBonCommande> lignes
+}
+
+class com.osm.inventory_service.config.PaletteConfig {
+- String type
+- String material
+- int colisPerLayer
+- int numberOfLayers
+- int maxHeightCm
+- boolean clientSpecific
+- UUID colisId
+}
+
+enum com.osm.inventory_service.Enum.ProduitFinalType {
++  VRAC
++  NON_VRAC
+}
+
+class com.osm.inventory_service.exception.InventoryBusinessException {
+- String code
+- HttpStatus status
++ <<Create>> InventoryBusinessException(String,String)
++ <<Create>> InventoryBusinessException(String,String,HttpStatus)
++ String getCode()
++ HttpStatus getStatus()
+}
+
+
+class com.osm.inventory_service.config.ConsommableConfig {
+- String sousType
+- String usage
+- String unit
+- Double quantity
+- Integer temperatureStockageCelsius
+}
+
+class com.osm.inventory_service.controller.StatistiqueController {
+- StatistiqueService statistiqueService
++ <<Create>> StatistiqueController(StatistiqueService)
++ ResponseEntity<StockDashboardPayloadDto> getDashboardPayload(int)
++ ResponseEntity<StatistiquesDTO> getDashboard()
++ ResponseEntity<List<ArticleCritiqueDto>> getArticlesCritiques()
++ ResponseEntity<List<MouvementRecentDto>> getMouvementsRecents(int)
++ Map<String,Object> getTauxRupture()
++ Map<String,Object> getDelaiValidation()
++ Map<String,Object> getValeurStock()
+}
+
+
+class com.osm.inventory_service.exception.GlobalExceptionHandler {
++ ResponseEntity<?> handleNotFound(ResourceNotFoundException)
++ ResponseEntity<?> handleIllegalArgument(IllegalArgumentException)
++ ResponseEntity<?> handleInventoryBusiness(InventoryBusinessException)
++ ResponseEntity<?> handleRuntime(RuntimeException)
+}
+
+class com.osm.inventory_service.dto.BOMDto {
+- List<BomLineDto> lines
+- UUID productId
+- String productName
+- ProduitFinal produitFinal
+- String version
+- Boolean active
++ UUID getSkuId()
++ void setSkuId(UUID)
++ String getSkuCode()
++ void setSkuCode(String)
+}
+
+
+interface com.osm.inventory_service.config.ArticleConfig {
+}
+
+
+com.xdev.xdevbase.entities.BaseEntity <|-- com.osm.inventory_service.entity.ArticleSec
+com.xdev.xdevbase.controllers.impl.BaseControllerImpl <|-- com.osm.inventory_service.controller.ProduitFinalController
+com.xdev.xdevbase.services.impl.BaseServiceImpl <|-- com.osm.inventory_service.service.ProduitFinalService
+com.xdev.xdevbase.repos.BaseRepository <|-- com.osm.inventory_service.repository.LigneConditionnementRepository
+java.io.Serializable <|.. com.osm.inventory_service.dto.FournisseurDto
+com.xdev.xdevbase.dtos.BaseDto <|-- com.osm.inventory_service.dto.FournisseurDto
+com.xdev.xdevbase.services.impl.BaseServiceImpl <|-- com.osm.inventory_service.service.LigneConditionnementService
+com.xdev.xdevbase.controllers.impl.BaseControllerImpl <|-- com.osm.inventory_service.controller.ArticleSecController
+java.io.Serializable <|.. com.osm.inventory_service.dto.EmplacementStockDto
+com.xdev.xdevbase.dtos.BaseDto <|-- com.osm.inventory_service.dto.EmplacementStockDto
+com.xdev.xdevbase.services.impl.BaseServiceImpl <|-- com.osm.inventory_service.service.BomService
+java.io.Serializable <|.. com.osm.inventory_service.dto.ProduitFinalDto
+com.xdev.xdevbase.dtos.BaseDto <|-- com.osm.inventory_service.dto.ProduitFinalDto
+com.xdev.xdevbase.services.impl.BaseServiceImpl <|-- com.osm.inventory_service.service.BonCommandeService
+com.xdev.xdevbase.entities.BaseEntity <|-- com.osm.inventory_service.entity.Fournisseur
+com.xdev.xdevbase.repos.BaseRepository <|-- com.osm.inventory_service.repository.BomLineRepository
+com.osm.inventory_service.config.ArticleConfig <|.. com.osm.inventory_service.config.ColisConfig
+com.xdev.xdevbase.services.impl.BaseServiceImpl <|-- com.osm.inventory_service.service.FournisseurService
+com.xdev.xdevbase.controllers.impl.BaseControllerImpl <|-- com.osm.inventory_service.controller.StockSecController
+com.xdev.xdevbase.services.impl.BaseServiceImpl <|-- com.osm.inventory_service.service.ArticleSecService
+java.io.Serializable <|.. com.osm.inventory_service.dto.ArticleSecDto
+com.xdev.xdevbase.dtos.BaseDto <|-- com.osm.inventory_service.dto.ArticleSecDto
+com.xdev.xdevbase.repos.BaseRepository <|-- com.osm.inventory_service.repository.StockSecRepository
+java.io.Serializable <|.. com.osm.inventory_service.dto.BonCommandeDto
+com.xdev.xdevbase.dtos.BaseDto <|-- com.osm.inventory_service.dto.BonCommandeDto
+com.xdev.xdevbase.entities.BaseEntity <|-- com.osm.inventory_service.entity.ProduitFinal
+com.xdev.xdevbase.repos.BaseRepository <|-- com.osm.inventory_service.repository.EmplacementStockRepository
+com.xdev.xdevbase.entities.BaseEntity <|-- com.osm.inventory_service.entity.EmplacementStock
+com.xdev.xdevbase.entities.BaseEntity <|-- com.osm.inventory_service.entity.MouvementStockSec
+com.xdev.xdevbase.controllers.impl.BaseControllerImpl <|-- com.osm.inventory_service.controller.BomController
+com.xdev.xdevbase.repos.BaseRepository <|-- com.osm.inventory_service.repository.ProduitFinalRepository
+com.xdev.xdevbase.services.impl.BaseServiceImpl <|-- com.osm.inventory_service.service.StockSecService
+com.xdev.xdevbase.entities.BaseEntity <|-- com.osm.inventory_service.entity.LigneBonCommande
+com.xdev.xdevbase.services.impl.BaseServiceImpl <|-- com.osm.inventory_service.service.EmplacementStockService
+com.xdev.xdevbase.repos.BaseRepository <|-- com.osm.inventory_service.repository.LigneBonCommandeRepository
+java.io.Serializable <|.. com.osm.inventory_service.dto.StockSecDto
+com.xdev.xdevbase.dtos.BaseDto <|-- com.osm.inventory_service.dto.StockSecDto
+com.osm.inventory_service.config.ArticleConfig <|.. com.osm.inventory_service.config.EmballageConfig
+com.xdev.xdevbase.entities.BaseEntity <|-- com.osm.inventory_service.entity.BOM
+com.xdev.xdevbase.controllers.impl.BaseControllerImpl <|-- com.osm.inventory_service.controller.BonCommandeController
+com.osm.inventory_service.config.ArticleConfig <|.. com.osm.inventory_service.config.UniteConfig
+com.xdev.xdevbase.entities.BaseEntity <|-- com.osm.inventory_service.entity.LigneConditionnement
+java.io.Serializable <|.. com.osm.inventory_service.dto.LigneConditionnementDto
+com.xdev.xdevbase.dtos.BaseDto <|-- com.osm.inventory_service.dto.LigneConditionnementDto
+com.xdev.xdevbase.controllers.impl.BaseControllerImpl <|-- com.osm.inventory_service.controller.LigneConditionnementController
+com.xdev.xdevbase.controllers.impl.BaseControllerImpl <|-- com.osm.inventory_service.controller.FournisseurController
+com.xdev.xdevbase.repos.BaseRepository <|-- com.osm.inventory_service.repository.BonCommandeRepository
+com.xdev.xdevbase.repos.BaseRepository <|-- com.osm.inventory_service.repository.ArticleSecRepository
+java.io.Serializable <|.. com.osm.inventory_service.dto.MouvementStockSecDto
+com.xdev.xdevbase.dtos.BaseDto <|-- com.osm.inventory_service.dto.MouvementStockSecDto
+com.xdev.xdevbase.controllers.impl.BaseControllerImpl <|-- com.osm.inventory_service.controller.EmplacementStockController
+com.xdev.xdevbase.entities.BaseEntity <|-- com.osm.inventory_service.entity.BomLine
+com.xdev.xdevbase.entities.BaseEntity <|-- com.osm.inventory_service.entity.StockSec
+com.xdev.xdevbase.repos.BaseRepository <|-- com.osm.inventory_service.repository.BomRepository
+java.io.Serializable <|.. com.osm.inventory_service.dto.LigneBonCommandeDto
+com.xdev.xdevbase.dtos.BaseDto <|-- com.osm.inventory_service.dto.LigneBonCommandeDto
+com.xdev.xdevbase.repos.BaseRepository <|-- com.osm.inventory_service.repository.MouvementStockSecRepository
+java.io.Serializable <|.. com.osm.inventory_service.dto.BomLineDto
+com.xdev.xdevbase.dtos.BaseDto <|-- com.osm.inventory_service.dto.BomLineDto
+com.xdev.xdevbase.repos.BaseRepository <|-- com.osm.inventory_service.repository.FournisseurRepository
+com.osm.inventory_service.exception.RuntimeException <|-- com.osm.inventory_service.exception.ResourceNotFoundException
+com.xdev.xdevbase.entities.BaseEntity <|-- com.osm.inventory_service.entity.BonCommande
+com.osm.inventory_service.config.ArticleConfig <|.. com.osm.inventory_service.config.PaletteConfig
+com.osm.inventory_service.exception.RuntimeException <|-- com.osm.inventory_service.exception.InventoryBusinessException
+com.osm.inventory_service.config.ArticleConfig <|.. com.osm.inventory_service.config.ConsommableConfig
+java.io.Serializable <|.. com.osm.inventory_service.dto.BOMDto
+com.xdev.xdevbase.dtos.BaseDto <|-- com.osm.inventory_service.dto.BOMDto
+@enduml
